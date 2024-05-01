@@ -1,0 +1,6 @@
+@GardenStroll.Server_HostAddress = http://localhost:5207
+
+GET {{GardenStroll.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
