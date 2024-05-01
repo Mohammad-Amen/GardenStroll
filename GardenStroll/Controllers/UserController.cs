@@ -29,5 +29,19 @@ namespace GardenStroll.Controllers
         {
             return await _dataContext.Users.FindAsync(id);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<int>> add(AppUser input)
+        {
+            var appUser = new AppUser
+            {
+                Id = Guid.NewGuid(),
+                Username = input.Username,
+                Password = input.Password
+            };
+
+            _dataContext.Users.Add(appUser);
+            return await _dataContext.SaveChangesAsync();
+        }
     }
 }
