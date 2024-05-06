@@ -1,6 +1,7 @@
 ﻿using GardenStroll.Data;
 using GardenStroll.DTOs;
 using GardenStroll.Entities;
+using GardenStroll.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,13 +13,15 @@ namespace GardenStroll.Controllers
     public class AccountController : ControllerBase
     {
         private readonly DataContext _context;
-        public AccountController(DataContext context)
+        private readonly ITokenService _tokenService;
+        public AccountController(DataContext context, ITokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<AppUser>> Register([FromBody] RegisterDto registerDto)
+        public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
         {
             if (await UserExists(registerDto.Username))
                 return BadRequest("User is taken");
@@ -37,11 +40,17 @@ namespace GardenStroll.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(user);
+            var userInfo = new UserDto
+            {
+                Username = registerDto.Username,
+                Token = _tokenService.CreateToken(user)
+            };
+
+            return userInfo;
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login(LoginDto loginDto)
+        public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
             var user = await GetUser(loginDto.Username);
 
@@ -55,7 +64,13 @@ namespace GardenStroll.Controllers
             if (!computedHash.SequenceEqual(user.PasswordHash))
                 return Unauthorized("invalid password");
 
-            return Ok(user);
+            var userInfo = new UserDto
+            {
+                Username = loginDto.Username,
+                Token = _tokenService.CreateToken(user)
+            };
+
+            return userInfo;
         }
 
 
