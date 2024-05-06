@@ -7,9 +7,7 @@ using System.Linq;
 
 namespace GardenStroll.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseApiController
     {
         private readonly DataContext _dataContext;
 
@@ -36,8 +34,7 @@ namespace GardenStroll.Controllers
             var appUser = new AppUser
             {
                 Id = Guid.NewGuid(),
-                Username = input.Username,
-                Password = input.Password
+                Username = input.Username
             };
 
             _dataContext.Users.Add(appUser);
