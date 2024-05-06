@@ -1,6 +1,7 @@
 ﻿using GardenStroll.Data;
 using GardenStroll.DTOs;
 using GardenStroll.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -17,7 +18,7 @@ namespace GardenStroll.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<AppUser>> Register(RegisterDto registerDto)
+        public async Task<ActionResult<AppUser>> Register([FromBody] RegisterDto registerDto)
         {
             if (await UserExists(registerDto.Username))
                 return BadRequest("User is taken");
@@ -39,9 +40,33 @@ namespace GardenStroll.Controllers
             return Ok(user);
         }
 
+        [HttpPost("login")]
+        public async Task<ActionResult> Login(LoginDto loginDto)
+        {
+            var user = await GetUser(loginDto.Username);
+
+            if (user == null)
+                return Unauthorized("invalid username");
+
+            using var hmac = new HMACSHA512(user.PasswordSalt);
+
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
+
+            if (!computedHash.SequenceEqual(user.PasswordHash))
+                return Unauthorized("invalid password");
+
+            return Ok(user);
+        }
+
+
         private async Task<bool> UserExists(string username)
         {
             return await _context.Users.AnyAsync(x => x.Username == username);
+        }
+
+        private async Task<AppUser> GetUser(string username)
+        {
+            return await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
         }
 
         [HttpDelete("deleteAllUsers")]
