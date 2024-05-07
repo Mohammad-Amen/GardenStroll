@@ -1,5 +1,6 @@
 ﻿using GardenStroll.Data;
 using GardenStroll.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,29 +17,16 @@ namespace GardenStroll.Controllers
             _dataContext = dataContext;
         }
 
-        [HttpGet]
+        [HttpGet("GetUsers")]
         public async Task<ActionResult<IEnumerable<AppUser>>> Get()
         {
             return await _dataContext.Users.ToListAsync();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetUser/{id}")]
         public async Task<ActionResult<AppUser>> getUser(Guid id)
         {
             return await _dataContext.Users.FindAsync(id);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<int>> add(AppUser input)
-        {
-            var appUser = new AppUser
-            {
-                Id = Guid.NewGuid(),
-                Username = input.Username
-            };
-
-            _dataContext.Users.Add(appUser);
-            return await _dataContext.SaveChangesAsync();
         }
     }
 }

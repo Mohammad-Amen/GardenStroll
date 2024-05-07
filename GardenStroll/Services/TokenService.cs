@@ -28,7 +28,7 @@ namespace GardenStroll.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(1),
+                Expires = DateTime.Now.AddDays(9),
                 SigningCredentials = creds
             };
 

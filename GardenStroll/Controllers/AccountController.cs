@@ -2,6 +2,7 @@
 using GardenStroll.DTOs;
 using GardenStroll.Entities;
 using GardenStroll.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using System.Text;
 
 namespace GardenStroll.Controllers
 {
-    public class AccountController : ControllerBase
+    public class AccountController : BaseApiController
     {
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
@@ -20,6 +21,7 @@ namespace GardenStroll.Controllers
             _tokenService = tokenService;
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
         {
@@ -49,8 +51,9 @@ namespace GardenStroll.Controllers
             return userInfo;
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+        public async Task<ActionResult<UserDto>> Login([FromForm] LoginDto loginDto)
         {
             var user = await GetUser(loginDto.Username);
 

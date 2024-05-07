@@ -8,15 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AppComponent implements OnInit
 {
-
-  title = 'clients';
   users : any;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.http.get("http://localhost:5222/api/user").subscribe((result) => {
-      console.log(result);
+    this.http.get("http://localhost:5222/api/user/GetUsers").subscribe((result) => {
+      this.users = result
     })
   }
 
