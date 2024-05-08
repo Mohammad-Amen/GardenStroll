@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace GardenStroll.Controllers
 {
+    [Authorize]
     public class UserController : BaseApiController
     {
         private readonly DataContext _dataContext;
