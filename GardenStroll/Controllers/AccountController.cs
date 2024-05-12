@@ -87,7 +87,7 @@ namespace GardenStroll.Controllers
             return await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
         }
 
-        [HttpDelete("deleteAllUsers")]
+        [HttpDelete("deleteAllUsers")] 
         public async Task<bool> DeleteUsers()
         {
             var allUsers = await _context.Users.ToListAsync();
