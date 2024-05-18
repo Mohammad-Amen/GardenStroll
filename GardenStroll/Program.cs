@@ -1,4 +1,6 @@
+using GardenStroll.Data;
 using GardenStroll.Extension;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +50,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    using var scope = app.Services.CreateScope();
+    var service = scope.ServiceProvider;
+    var context = service.GetRequiredService<DataContext>();
+    await context.Database.MigrateAsync();
+    await Seed.SeedUsers(context);
 }
 
 app.UseAuthentication();
@@ -61,5 +68,6 @@ app.UseCors(options =>
 });
 
 app.MapControllers();
+
 
 app.Run();

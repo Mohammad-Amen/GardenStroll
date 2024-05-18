@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../_services/account.service';
 import { User } from '../_model/user';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-nav',
@@ -16,7 +18,9 @@ export class NavComponent implements OnInit {
   };
   loggedIn = false;
 
-  constructor(private http: HttpClient, private accountService: AccountService) {}
+  constructor(private http: HttpClient, private accountService: AccountService, private router: Router,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.getCurrentUser();
@@ -33,10 +37,11 @@ export class NavComponent implements OnInit {
   login(): void {
     this.accountService.login(this.model).subscribe(
       (result: any) => {
-        console.log(result)
+        this.router.navigateByUrl('/members');
       },
       error => {
-        console.log(error);
+        debugger;
+        this.toastr.error(error.error)
       }
     );
   }
@@ -49,5 +54,6 @@ export class NavComponent implements OnInit {
       token: ''
     };
     this.accountService.logout();
+    this.router.navigateByUrl('/');
   }
 }

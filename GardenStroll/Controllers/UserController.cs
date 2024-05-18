@@ -18,10 +18,10 @@ namespace GardenStroll.Controllers
             _dataContext = dataContext;
         }
 
-        [HttpGet("GetUsers")]
-        public async Task<ActionResult<IEnumerable<AppUser>>> Get()
+        [HttpGet("GetAllUsers")]
+        public async Task<ActionResult<IEnumerable<AppUser>>> GetAllUsers()
         {
-            return await _dataContext.Users.ToListAsync();
+            return await _dataContext.Users.Include(user => user.Photos).ToListAsync();
         }
 
         [HttpGet("GetUser/{id}")]

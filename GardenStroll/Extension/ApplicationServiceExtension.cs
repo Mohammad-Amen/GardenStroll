@@ -11,6 +11,7 @@ namespace GardenStroll.Extension
         {
             services.AddDbContext<DataContext>(options => { options.UseSqlServer(configuration.GetConnectionString("DefaultConnections")); });
             services.AddScoped<ITokenService, TokenService>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             return services;
         }
